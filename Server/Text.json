@@ -1,0 +1,39 @@
+[
+  {
+    "Id": "8d3d8f75-5832-4d23-9d78-4b81b92a20e7",
+    "Ingredients": [
+      "milk",
+      "cocoa powder",
+      "whipped cream"
+    ],
+    "Title": "Chocolate Milkshake",
+    "Instructions": [
+      "put the milk and cocoa powder in a blender",
+      " top with whipped cream"
+    ],
+    "Categories": [
+      "Drinks",
+      "Brunch"
+    ]
+  },
+  {
+    "Id": "16b3ba7f-ac5f-4e25-8535-ab3c5eb253e3",
+    "Ingredients": [
+      "Salt",
+      "Olive oil",
+      "Pesto sauce",
+      "Dried pasta",
+      "Cooking cream"
+    ],
+    "Title": "Pesto Pasta",
+    "Instructions": [
+      "boil the dried pasta",
+      "cook the pesto sauce with the cooking cream for a couple of minutes",
+      "add the pasta"
+    ],
+    "Categories": [
+      "Dinner",
+      "Supper"
+    ]
+  }
+]
