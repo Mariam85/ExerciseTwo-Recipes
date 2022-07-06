@@ -12,11 +12,9 @@ app.MapPost("recipes/add-recipe", async (Recipe recipe) =>
     {
         recipes.Add(recipe);
         UpdateFile(recipes);
-
         return Results.Created("Successfully added a recipe", recipe);
     }
     return Results.BadRequest();
-
 });
 
 // Editing a recipe.
@@ -47,7 +45,6 @@ app.MapPut("recipes/edit-recipe/{id}", async (Guid id, string attributeName, str
     }
     UpdateFile(recipes);
     return Results.Ok(recipes.Find(r => r.Id == id));
-
 });
 
 // Listing a recipe.
