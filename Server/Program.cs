@@ -89,6 +89,13 @@ app.MapDelete("recipes/remove-category/{category}", async (string category) =>
     return Results.BadRequest("This category does not exist.");
 });
 
+// Getting the json file content to display it.
+app.MapGet("recipes",async ()=>
+{ 
+    List<Recipe> recipes= await ReadFile();
+    return Results.Ok(recipes);
+});
+
 app.Run();
 
 // Reading the json file content.
