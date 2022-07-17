@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.IO;
@@ -15,16 +15,18 @@ class Program
 {
     private static readonly HttpClient client = new HttpClient();
     static async Task Main(string[] args)
-    {    
+    {
+        // Reading the url from appsettings.json.
+        var builder = WebApplication.CreateBuilder(args);
+        var config = builder.Configuration["Url"];
+        client.BaseAddress = new Uri(config);
+        client.DefaultRequestHeaders.Accept.Clear();
+        client.DefaultRequestHeaders.Accept.Add(
+        new MediaTypeWithQualityHeaderValue("application/json"));
+
         // Looping till the user chooses to exit.
         while (true)
         {
-            // The following lines will be changed so that the url is not hard coded. 
-            client.BaseAddress = new Uri("https://localhost:7165/");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
             // The title using FigletText.
             AnsiConsole.Write(
                         new FigletText("Recipes app")
@@ -63,7 +65,6 @@ class Program
             else if (userChoice == "Edit recipe")
             {
                 List<Recipe> recipesList = await client.GetFromJsonAsync<List<Recipe>>("recipes");
-
                 var table = new Table().Border(TableBorder.Ascii2);
                 table.Expand();
                 table.AddColumn("[dodgerblue2]Title[/]");
@@ -94,21 +95,30 @@ class Program
                         {
                                 "Categories", "Instructions", "Ingredients", "Title"
                         }));
-
                 var choiceEdit = attributeToEdit.Count == 1 ? attributeToEdit[0] : null;
-                bool isSuccess = false;
 
-                // Todo use the edit endpoint here.
-                if (isSuccess)
+                // Checking which element the user would like to edit. 
+                string afterEdit = "";
+                if (choiceEdit == "Categories")
                 {
-                    AnsiConsole.WriteLine("Successfully edited the recipe!");
+                    afterEdit = AnsiConsole.Ask<string>("Enter new categories: [green]seperate them by adding a dash - [/]?");
+                }
+                else if (choiceEdit == "Instructions")
+                {
+                    afterEdit = AnsiConsole.Ask<string>("Enter new instructions: [green]seperate them by adding a dash - .[/]?");
+                }
+                else if (choiceEdit == "Ingredients")
+                {
+                    afterEdit = AnsiConsole.Ask<string>("Enter new ingredients: [green]seperate them by adding a dash - .[/]?");
                 }
                 else
                 {
-                    AnsiConsole.WriteLine("Failed to edit the recipe");
+                    afterEdit = AnsiConsole.Ask<string>("Enter new title:");
                 }
-                bool mainMenu = AnsiConsole.Confirm("Do you want to return to main menu?");
-                if (!mainMenu)
+
+                var id = recipeToEdit.Id;
+                HttpResponseMessage response = await client.PutAsync($"recipes/edit-recipe/{id}?attributeName={choiceEdit}&editedParameter={afterEdit}", null);
+                if (!CheckSuccess(response))
                 {
                     break;
                 }
@@ -167,22 +177,24 @@ class Program
                 }
                 AnsiConsole.Clear();
             }
+            // Exiting.
+            else
+            {
+                break;
+            }
         }
     }
     static bool CheckSuccess(HttpResponseMessage response)
     {
         if (response.IsSuccessStatusCode)
         {
-            AnsiConsole.WriteLine("Successfully renamed category!");
+            AnsiConsole.WriteLine("Successful execution!");
         }
         else
         {
-            AnsiConsole.WriteLine("Failed to rename category");
+            AnsiConsole.WriteLine("Failed to execute");
         }
         bool mainMenu = AnsiConsole.Confirm("Do you want to return to main menu?");
         return mainMenu;
     }
 }
-
-
-
